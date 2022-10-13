@@ -1,195 +1,113 @@
-* {
-  box-sizing: border-box;
+// const board = document.querySelector("#board");
+const colorsBoard = document.querySelector(".colors");
+const colorsItems = colorsBoard.querySelectorAll(".colors-item");
+const refreshColors = document.querySelector(".refresh");
+const clearBtn = document.querySelector(".clear");
+const changeBtn = document.querySelector(".change-tool");
+const hexArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, "a", "b", "c", "d", "e", "f"];
+let squareNumber;
+let newColorArray = [];
+let newColor;
+let currentColor = "#a5a4d8";
+let inputWay = "mouseover";
+
+if (window.matchMedia("(max-width: 500px)").matches) {
+  squareNumber = 100;
+} else {
+  squareNumber = 400;
+}
+function getColorBoard() {
+  for (let colorsItem of colorsItems) {
+    createNewColor();
+    colorsItem.style.border = "none";
+    colorsItem.style.background = `#${newColor}`;
+    colorsItem.addEventListener("click", () => {
+      colorsItem.style.border = "2px solid red";
+      currentColor = colorsItem.style.backgroundColor;
+    });
+  }
 }
 
-body {
-  background-color: #111;
-  height: 100vh;
-  /* overflow: hidden; */
-  margin: 0;
+getColorBoard();
+refreshColors.addEventListener("click", getColorBoard);
+changeBtn.addEventListener("click", () => {
+  if (inputWay == "mouseover") {
+    inputWay = "mousedown";
+  } else {
+    inputWay = "mouseover";
+  }
+  deleteBoardElement();
+  createBordElement();
+});
+createBordElement();
+function createBordElement() {
+  for (let i = 0; i < squareNumber; i++) {
+    const square = document.createElement("div");
+    square.classList.add("square");
+
+    square.addEventListener(`${inputWay}`, (evt) => {
+      evt.preventDefault();
+      setColor(square);
+    });
+    clearBtn.addEventListener("click", () => {
+      square.style.background = "#fff";
+    });
+    board.prepend(square);
+  }
+}
+function deleteBoardElement() {
+  for (let i = 0; i < SQUARES_NUMBER; i++) {
+    const square = document.querySelector(".square");
+    square.remove();
+  }
+}
+function setColor(element) {
+  createNewColor();
+  element.style.background = currentColor;
 }
 
-.container {
-  margin: 15px auto 0;
-  max-width: fit-content;
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  grid-template-rows: 1fr 100px;
-
+function randomInteger() {
+  let rand = Math.random() * 15;
+  return Math.floor(rand);
 }
 
-.tools {
-
-  grid-row-start: 1;
-  grid-column-start: 1;
-
-  grid-row-end: 3;
-  grid-column-end: 2;
-
+function createNewColor() {
+  for (let i = 0; i < 6; i++) {
+    let rand = randomInteger();
+    newColorArray.push(hexArray[rand]);
+  }
+  newColor = newColorArray.join("");
+  newColorArray = [];
 }
 
-.tools-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 200px;
-  padding: 20px;
-  background-color: rgb(65, 64, 64);
-  margin-left: auto;
-  height: 100%;
-  max-height: 697px;
-  gap: 20px;
-  padding-right: 0;
-}
+import { domtoimage } from "./dom-to-image.js";
 
-.btn {
-  width: 150px;
-  height: 50px;
-  background-color: rgb(255, 255, 255);
-  border: none;
-  cursor: pointer;
-}
+const node = document.querySelector(".board-container");
+const btn = document.querySelector(".save");
+const resaultSave = document.querySelector(".resault-save");
+btn.addEventListener("click", () => {
+  const resault = document.querySelector(".resault");
+  const resaultImg = document.querySelector(".resault-img");
+  const resaultChild = resaultImg.children;
 
-.btn:hover {
-  background-color: #eee;
-}
-
-.board-container {
-  display: flex;
-  grid-row-start: 1;
-  grid-column-start: 2;
-  justify-content: center;
-  grid-row-end: 2;
-  grid-column-end: 3;
-  padding: 20px;
-  background-color: rgb(65, 64, 64);
-
-}
-
-.board {
-
-  display: grid;
-  grid-template-columns: repeat(20, 25px);
-  grid-template-rows: repeat(20, 25px);
-  gap: 3px;
-
-}
-
-.square {
-  /* width: 15px;
-  height: 15px; */
-  background: #eee;
-}
-
-.square:hover {
-  transition-duration: 0s;
-}
-
-.palette {
-  background-color: rgb(65, 64, 64);
-  max-height: 100px;
-  grid-row-start: 2;
-  grid-column-start: 2;
-  grid-row-end: 3;
-  grid-column-end: 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-}
-
-.colors {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 4px 4px;
-  gap: 2px;
-  background-color: #fff;
-  margin: 0;
-}
-
-.colors-item {
-  display: block;
-  width: 50px;
-  height: 50px;
-  background-color: aqua;
-  border: 2px solid #fff;
-  cursor: pointer;
-}
-
-.current-color {
-  border: 2px solid rgb(240, 82, 82);
-}
-
-.refresh {
-  box-sizing: border-box;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  cursor: pointer;
-  transition: background-color .1s ease-in;
-}
-
-.refresh:hover {
-  background-color: #eee;
-}
-
-.refresh svg {
-  fill: rgb(100, 100, 100);
-  transition: all .2s ease-in-out;
-}
-
-.refresh:hover svg {
-  transform: rotate(180deg);
-}
-
-.resault {
-  position: absolute;
-  left: 50%;
-  top: 100px;
-  transform: translateX(-50%);
-  width: 40%;
-  max-width: 500px;
-  height: 80vh;
-  background-color: #eee;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: 40px;
-}
-
-.resault-img {
-  max-width: 350px;
-  height: 70%;
-}
-
-.resault-buttons {
-  height: 100px;
-  width: 80%;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.resault-btn {
-  font-family: inherit;
-  font-size: inherit;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  width: 150px;
-  height: 50px;
-  border: none;
-  background-color: rgb(27, 170, 198);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.resault-btn:hover {
-  background-color: rgb(94, 193, 235);
-}
+  resault.style.display = "flex";
+  domtoimage
+    .toJpeg(node)
+    .then(function (dataUrl) {
+      let img = new Image();
+      img.src = dataUrl;
+      img.style.width = "100%";
+      let url = img.getAttribute("src");
+      resaultImg.appendChild(img);
+      resaultSave.addEventListener("click", () => {
+        resaultSave.setAttribute("href", url);
+      });
+    })
+    .catch(function (error) {
+      console.error("oops, something went wrong!", error);
+    });
+  document.querySelector(".resault-close").addEventListener("click", () => {
+    resault.style.display = "none";
+    resaultChild[0].remove();
+  });
+});
