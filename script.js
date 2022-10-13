@@ -6,11 +6,18 @@ const clearBtn = document.querySelector(".clear");
 const changeBtn = document.querySelector(".change-tool");
 const SQUARES_NUMBER = 400;
 const hexArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, "a", "b", "c", "d", "e", "f"];
-
+let squareNumber;
 let newColorArray = [];
 let newColor;
 let currentColor = "#a5a4d8";
 let inputWay = "mouseover";
+
+if (window.matchMedia("(max-width: 500px)").matches) {
+  squareNumber = 100;
+} else {
+  squareNumber = 400;
+}
+
 function getColorBoard() {
   for (let colorsItem of colorsItems) {
     createNewColor();
@@ -36,7 +43,7 @@ changeBtn.addEventListener("click", () => {
 });
 createBordElement();
 function createBordElement() {
-  for (let i = 0; i < SQUARES_NUMBER; i++) {
+  for (let i = 0; i < squareNumber; i++) {
     const square = document.createElement("div");
     square.classList.add("square");
 
